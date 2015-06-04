@@ -1,26 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
+    <!-- App titles-->
     <string name="app_name">InnoTrade Test Task</string>
-    <string name="auth_title">My Profile</string>
+    <string name="my_auth_title">My Profile</string>
     <string name="friend_title">Profile</string>
-    <string name="item">Item #</string>
     <!-- Error -->
-    <string name="error">Error:( check internet connection</string>
+    <string name="error">Error: check internet connection</string>
     <string name="json_error">JSON Error!</string>
     <string name="close">Close</string>
     <!-- DialogsMain -->
     <string name="message">Message</string>
     <string name="title">Title</string>
     <string name="progress">Progress...</string>
+    <string name="logging_in">Logging in...</string>
+    <string name="loading_profile">Loading profile...</string>
+    <string name="loading_friends">Loading friends...</string>
     <string name="ok">Ok</string>
     <string name="set">Set</string>
     <string name="cancel">Cancel</string>
-
     <string name="progress_save_message">Saving...</string>
-
-    <string name="social_vk_button">{icon-vk} Vk login</string>
-
     <!-- Menu -->
     <string name="menu_done_item">Done</string>
     <string name="menu_list_item">List</string>
@@ -44,5 +42,12 @@
     <string name="delete_friend">Remove friend</string>
     <string name="add_friend">Invite</string>
     <string name="search_friend">Search</string>
-
+    <!-- Vk social-->
+    <string name="vk_login">Login</string>
+    <string name="vk_logout">Logout</string>
+    <string name="social_vk_button">{icon-vk} Vk login</string>
+    <string name="vk_def_name">No Name</string>
+    <string name="vk_def_id">id=unknown</string>
+    <string name="show_details">show details...</string>
+    <string name="hide_details">hide details</string>
 </resources>

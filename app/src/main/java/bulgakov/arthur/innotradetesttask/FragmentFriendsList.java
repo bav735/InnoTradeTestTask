@@ -13,7 +13,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.github.gorbin.asne.core.persons.SocialPerson;
 import com.vk.sdk.api.VKApiConst;
@@ -32,7 +31,10 @@ import bulgakov.arthur.innotradetesttask.utils.ADialogs;
 import bulgakov.arthur.innotradetesttask.utils.VkConstants;
 
 /**
- *
+ * Requests user's VK friends list
+ * Catches errors during request to VK, shows error dialog
+ * Searches through friends list
+ * Redirects to FragmentFriend on list item click
  */
 public class FragmentFriendsList extends Fragment implements AdapterView.OnItemClickListener, SearchView.OnQueryTextListener {
 
@@ -48,7 +50,7 @@ public class FragmentFriendsList extends Fragment implements AdapterView.OnItemC
    public FragmentFriendsList() {
    }
 
-   public static FragmentFriendsList newInstannce(String userId) {
+   public static FragmentFriendsList newInstance(String userId) {
       FragmentFriendsList fragment = new FragmentFriendsList();
       Bundle args = new Bundle();
       args.putString(VkConstants.USER_ID, userId);
@@ -66,7 +68,7 @@ public class FragmentFriendsList extends Fragment implements AdapterView.OnItemC
       listView = (ListView) rootView.findViewById(R.id.list_view);
 
       loadingDialog = new ADialogs(getActivity());
-      loadingDialog.customProgressDialog(true, "Loading friends...", null);
+      loadingDialog.customProgressDialog(true, getString(R.string.loading_friends), null);
 
       loadingDialog.showProgress();
       final VKRequest requestFriends = new VKRequest("friends.get", VKParameters.from(VKApiConst.USER_ID,
@@ -110,8 +112,6 @@ public class FragmentFriendsList extends Fragment implements AdapterView.OnItemC
          @Override
          public void attemptFailed(VKRequest request, int attemptNumber, int totalAttempts) {
             Log.d(ActivityMain.APP_TAG, "get friends fail attempt # " + attemptNumber);
-            Toast.makeText(getActivity(), "Error while getting friends, fail attempt # " + attemptNumber
-                    , Toast.LENGTH_SHORT).show();
             loadingDialog.cancelProgress();
          }
       });
@@ -138,10 +138,9 @@ public class FragmentFriendsList extends Fragment implements AdapterView.OnItemC
    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
       FragmentFriend clickedFriend = FragmentFriend
               .newInstance(searchedFriendsList.get(i).id);
-      Log.d(ActivityMain.APP_TAG, "clicked on " + searchedFriendsList.get(i).id);
       getActivity().getSupportFragmentManager().beginTransaction()
               .addToBackStack(null)
-              .replace(R.id.fragment_container, clickedFriend, FRAGMENT_FRIEND_LIST_TAG)
+              .replace(R.id.fragment_container, clickedFriend, FragmentFriend.FRAGMENT_FRIEND_TAG)
               .commit();
    }
 

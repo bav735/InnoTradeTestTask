@@ -15,6 +15,9 @@ import com.squareup.picasso.Picasso;
 
 import bulgakov.arthur.innotradetesttask.R;
 
+/**
+ * Represents VK user information
+ */
 public class SocialCard extends RelativeLayout {
    public Button connect;
    public Button detail;

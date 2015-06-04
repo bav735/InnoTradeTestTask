@@ -1,6 +1,7 @@
 package bulgakov.arthur.innotradetesttask;
 
 import android.app.Activity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,7 +9,6 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.github.gorbin.asne.core.persons.SocialPerson;
 import com.squareup.picasso.Callback;
@@ -19,13 +19,12 @@ import java.util.ArrayList;
 import bulgakov.arthur.innotradetesttask.utils.VkConstants;
 
 /**
- * Created by A on 01.06.2015.
+ * Manages friends list
  */
 public class FriendsListAdapter extends BaseAdapter {
    private final Activity context;
    private ViewHolder holder;
    private ArrayList<SocialPerson> friends;
-   private boolean net_err;
 
    public FriendsListAdapter(Activity context, ArrayList<SocialPerson> friends) {
       this.context = context;
@@ -49,7 +48,6 @@ public class FriendsListAdapter extends BaseAdapter {
 
    @Override
    public View getView(int position, View convertView, ViewGroup parent) {
-      net_err = false;
       if (convertView == null) {
          LayoutInflater inflater = context.getLayoutInflater();
          convertView = inflater.inflate(R.layout.friends_list_row, null, true);
@@ -82,7 +80,7 @@ public class FriendsListAdapter extends BaseAdapter {
 
                     @Override
                     public void onError() {
-                       net_err = true;
+                       Log.d(ActivityMain.APP_TAG, "Err while loading img");
                        holder.progress.setVisibility(View.INVISIBLE);
                     }
                  });
@@ -90,9 +88,6 @@ public class FriendsListAdapter extends BaseAdapter {
          holder.imageView.setImageResource(VkConstants.userPhoto);
          holder.progress.setVisibility(View.INVISIBLE);
       }
-
-      if (net_err)
-         Toast.makeText(context, "ERROR" + net_err, Toast.LENGTH_SHORT).show();
       return convertView;
    }
 

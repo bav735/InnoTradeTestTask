@@ -7,6 +7,9 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -24,6 +27,12 @@ import bulgakov.arthur.innotradetesttask.utils.ADialogs;
 import bulgakov.arthur.innotradetesttask.utils.SocialCard;
 import bulgakov.arthur.innotradetesttask.utils.VkConstants;
 
+/**
+ * Implements authorization to VK
+ * Requests general or detailed user information
+ * Catches errors during requests to VK, shows error dialog
+ * Redirects to FragmentFriendsList on friends button click
+ */
 public class FragmentLogin extends Fragment
         implements OnLoginCompleteListener, SocialNetworkManager.OnInitializationCompleteListener,
         OnRequestSocialPersonCompleteListener, OnRequestDetailedSocialPersonCompleteListener {
@@ -48,15 +57,16 @@ public class FragmentLogin extends Fragment
    public View onCreateView(LayoutInflater inflater, ViewGroup container,
                             Bundle savedInstanceState) {
       setRetainInstance(true);
+      setHasOptionsMenu(true);
       Log.d(ActivityMain.APP_TAG, "Login Fragment onCreate View");
       fragmentManager = getActivity().getSupportFragmentManager();
-      View rootView = inflater.inflate(R.layout.fragment_profile, container, false);
-      ((ActivityMain) getActivity()).getSupportActionBar().setTitle(R.string.auth_title);
+      View rootView = inflater.inflate(R.layout.fragment_login, container, false);
+      ((ActivityMain) getActivity()).getSupportActionBar().setTitle(R.string.my_auth_title);
 
       loginProgressDialog = new ADialogs(getActivity());
-      loginProgressDialog.customProgressDialog(true, "Logging in...", null);
+      loginProgressDialog.customProgressDialog(true, getString(R.string.logging_in), null);
       loadingDialog = new ADialogs(getActivity());
-      loadingDialog.customProgressDialog(true, "Loading profile...", null);
+      loadingDialog.customProgressDialog(true, getString(R.string.loading_profile), null);
 
       vkSocialCard = (SocialCard) rootView.findViewById(R.id.vk_card);
       initializeSocialNetworkManager();
@@ -103,7 +113,7 @@ public class FragmentLogin extends Fragment
    private void setDefaultUserInfo() {
       vkSocialCard.detail.setVisibility(View.GONE);
       vkSocialCard.setConnectButtonIcon(VkConstants.logo);
-      vkSocialCard.setConnectButtonText("Login");
+      vkSocialCard.setConnectButtonText(getString(R.string.vk_login));
       vkSocialCard.connect.setOnClickListener(new View.OnClickListener() {
          @Override
          public void onClick(View view) {
@@ -115,8 +125,8 @@ public class FragmentLogin extends Fragment
       });
       vkSocialCard.friends.setVisibility(View.GONE);
       userId = null;
-      vkSocialCard.setName("NoName");
-      vkSocialCard.setId("unknown");
+      vkSocialCard.setName(getString(R.string.vk_def_name));
+      vkSocialCard.setId(getString(R.string.vk_def_id));
       vkSocialCard.setImageResource(VkConstants.userPhoto);
    }
 
@@ -144,14 +154,14 @@ public class FragmentLogin extends Fragment
    @Override
    public void onRequestSocialPersonSuccess(int socialNetworkId, SocialPerson socialPerson) {
       isDetailedInfoShown = false;
-      vkSocialCard.detail.setText("show details...");
+      vkSocialCard.detail.setText(getString(R.string.show_details));
       setSocialCardFromUser(socialPerson, vkSocialCard);
    }
 
    @Override
    public void onRequestDetailedSocialPersonSuccess(int socialNetworkId, SocialPerson socialPerson) {
       isDetailedInfoShown = true;
-      vkSocialCard.detail.setText("hide details");
+      vkSocialCard.detail.setText(getString(R.string.hide_details));
       setSocialCardFromUser(socialPerson, vkSocialCard);
    }
 
@@ -165,7 +175,7 @@ public class FragmentLogin extends Fragment
       if ((vkSocialNetwork != null) && (vkSocialNetwork.isConnected())) {
          Log.d(ActivityMain.APP_TAG, "vk is not null");
          vkSocialCard.setConnectButtonIcon(VkConstants.logo);
-         vkSocialCard.setConnectButtonText("Logout");
+         vkSocialCard.setConnectButtonText(getString(R.string.vk_logout));
          vkSocialCard.connect.setVisibility(View.VISIBLE);
          vkSocialCard.connect.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -178,10 +188,10 @@ public class FragmentLogin extends Fragment
          vkSocialCard.friends.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                Log.d(ActivityMain.APP_TAG, "friends->");
-               FragmentFriendsList fragmentFriendsList = FragmentFriendsList.newInstannce(userId);
                fragmentManager.beginTransaction()
                        .addToBackStack(null)
-                       .replace(R.id.fragment_container, fragmentFriendsList, FRAGMENT_LOGIN_TAG)
+                       .replace(R.id.fragment_container, FragmentFriendsList.newInstance(userId),
+                               FragmentFriendsList.FRAGMENT_FRIEND_LIST_TAG)
                        .commit();
             }
          });
@@ -194,7 +204,11 @@ public class FragmentLogin extends Fragment
                   getDetailedUserInfo();
             }
          });
-         getGeneralUserInfo();
+
+         if (isDetailedInfoShown)
+            getDetailedUserInfo();
+         else
+            getGeneralUserInfo();
       } else {
          Log.d(ActivityMain.APP_TAG, "vk is null");
          setDefaultUserInfo();
@@ -256,6 +270,23 @@ public class FragmentLogin extends Fragment
       super.onResume();
       if (loginProgressDialog != null) {
          loginProgressDialog.cancelProgress();
+      }
+   }
+
+   @Override
+   public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+      super.onCreateOptionsMenu(menu, inflater);
+      inflater.inflate(R.menu.login_menu, menu);
+   }
+
+   @Override
+   public boolean onOptionsItemSelected(MenuItem item) {
+      switch (item.getItemId()) {
+         case R.id.login_refresh_action:
+            updateVkSocialCard();
+            return true;
+         default:
+            return super.onOptionsItemSelected(item);
       }
    }
 }

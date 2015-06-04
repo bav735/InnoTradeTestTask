@@ -8,7 +8,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
 
@@ -16,13 +15,14 @@ import java.io.File;
 
 import bulgakov.arthur.innotradetesttask.R;
 
-
+/**
+ * Contains custom AlertDialogs
+ */
 public class ADialogs {
    private Context context;
    private ADialogsListener aListener = null;
    private ADialogsEditListener aEditListener = null;
    private ADialogsProgressListener progressListener = null;
-   private ADialogsListListener listListener = null;
    // ProgressDialog
    private ProgressDialog pd;
    // CustomListDialog
@@ -44,9 +44,7 @@ public class ADialogs {
       if (message != null) {
          ad.setMessage(message);
       }
-      if (cancelable) {
-         ad.setCancelable(true);
-      }
+      ad.setCancelable(cancelable);
       return ad;
    }
 
@@ -92,53 +90,13 @@ public class ADialogs {
       ad.create().show();
    }
 
-   public void setADialogsListListener(ADialogsListListener listListener) {
-      this.listListener = listListener;
-   }
-
-   public void listDialog(boolean cancelable, String title, String[] list, final VkConstants.SharePost[] numList) {
-      AlertDialog.Builder ad = build(cancelable, title, null);
-
-      final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(
-              context,
-              android.R.layout.select_dialog_item, list);
-
-      ad.setNegativeButton("Cancel",
-              new DialogInterface.OnClickListener() {
-                 @Override
-                 public void onClick(DialogInterface dialog, int id) {
-                    dialog.cancel();
-                 }
-              });
-
-      ad.setAdapter(arrayAdapter,
-              new DialogInterface.OnClickListener() {
-                 @Override
-                 public void onClick(DialogInterface dialog, int id) {
-                    if (listListener != null) {
-                       listListener.onADialogsListDialog(dialog, id, numList[id]);
-                    } else {
-                       dialog.cancel();
-                    }
-                 }
-              });
-      if (cancelable) {
-         ad.setOnCancelListener(new DialogInterface.OnCancelListener() {
-            public void onCancel(DialogInterface dialog) {
-               dialog.cancel();
-            }
-         });
-      }
-      ad.create().show();
-   }
-
    public void setADialogsEditListener(ADialogsEditListener aEditListener) {
       this.aEditListener = aEditListener;
    }
 
    public void customEditDialog(boolean cancelable, String title, String positiveButton, String negativeButton) {
       LayoutInflater li = LayoutInflater.from(context);
-      View customView = li.inflate(R.layout.edit_text_dialog, null);
+      View customView = li.inflate(R.layout.dialog_edit_text, null);
       AlertDialog.Builder ad = build(cancelable, title);
       ad.setView(customView);
       final EditText userInput = (EditText) customView.findViewById(R.id.editTextDialogUserInput);
@@ -199,8 +157,6 @@ public class ADialogs {
             }
          });
       }
-      if (listener != null)
-         pd.setButton(DialogInterface.BUTTON_POSITIVE, "Interrupt", listener);
    }
 
    public void showProgress() {
@@ -217,7 +173,7 @@ public class ADialogs {
 
    public void customErrorDialog(String message, DialogInterface.OnClickListener listener) {
       AlertDialog.Builder ad = build(false, context.getString(R.string.error), message);
-      ad.setPositiveButton("Ok", listener);
+      ad.setPositiveButton(context.getString(R.string.ok), listener);
       ad.create().show();
    }
 
@@ -268,11 +224,6 @@ public class ADialogs {
       public void onADialogsNegativeClick(DialogInterface dialog);
 
       public void onADialogsCancel(DialogInterface dialog);
-   }
-
-   // ListDialog
-   public interface ADialogsListListener {
-      public void onADialogsListDialog(DialogInterface dialog, int id, VkConstants.SharePost type);
    }
 
    //EditDialog

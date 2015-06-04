@@ -9,6 +9,10 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+/**
+ * Starts LoginFragment on first create
+ * Listens to fragments back stack
+ */
 public class ActivityMain extends ActionBarActivity {
 
    public static final String APP_TAG = "inno_trade_tag";

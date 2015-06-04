@@ -1,5 +1,10 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    tools:context="bulgakov.arthur.innotradetesttask.ActivityMain" >
+      xmlns:app="http://schemas.android.com/apk/res-auto"
+      xmlns:tools="http://schemas.android.com/tools"
+      tools:context=".ActivityMain">
+
+    <item android:id="@+id/friend_refresh_action"
+          android:icon="@drawable/ic_action_ic_action_refresh"
+          android:title="Refresh"
+          app:showAsAction="always"/>
 </menu>
